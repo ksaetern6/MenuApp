@@ -7,9 +7,11 @@ import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
@@ -65,6 +67,15 @@ public class MainActivity extends AppCompatActivity {
                         textureView.setSurfaceTexture(output.getSurfaceTexture());
                     }
                 });
+
+        findViewById(R.id.imgCapture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, imageDisplay.class);
+                startActivity(intent);
+            }
+        });
+
         CameraX.bindToLifecycle(this, preview); //imgCap
 
     }
