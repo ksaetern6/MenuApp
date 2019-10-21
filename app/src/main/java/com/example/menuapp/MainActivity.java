@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()) {
             case R.id.action_favorite:
-                Toast.makeText(this, "Favorite selected", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, loginMain.class);
+                startActivity(intent);
                 break;
             case R.id.action_settings:
                 Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
