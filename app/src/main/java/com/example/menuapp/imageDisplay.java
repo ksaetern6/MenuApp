@@ -1,6 +1,7 @@
 package com.example.menuapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -26,6 +27,12 @@ public class imageDisplay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
+
+//        Toolbar myChildToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//        setSupportActionBar(myChildToolbar);
+//
+//        ActionBar ab = getSupportActionBar();
+//        ab.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         bucketStorageRef = intent.getStringExtra("FBRef");

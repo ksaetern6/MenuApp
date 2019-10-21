@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MenuApp</string>
+    <string name="action_favorite">Favorites</string>
+    <string name="action_settings">Settings</string>
 </resources>

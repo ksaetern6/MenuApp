@@ -17,10 +17,14 @@ import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,11 +36,11 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOption
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // https://i.imgur.com/JhYpzdR.jpg
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     TextureView textureView;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textureView = findViewById(R.id.view_finder);
+        Toolbar mainToolBar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(mainToolBar);
 
         if(allPermissionsGranted()){
             startCamera(); //start camera if permission has been granted by user
@@ -180,6 +186,35 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+
+    /*
+    @name:
+    @desc:
+
+    *Only called once
+    */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()) {
+            case R.id.action_favorite:
+                Toast.makeText(this, "Favorite selected", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_settings:
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                // user's action was not recognized, invoke superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        } //switch
+
+        return true;
     }
 }
 
