@@ -27,29 +27,26 @@ import java.util.Map;
 public class imageDisplay extends AppCompatActivity {
     // allow read, write: if request.auth != null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-//    FirebaseStorage storage = FirebaseStorage.getInstance();
-//    StorageReference storageRef = storage.getReference();
-//    String bucketStorageRef = "images";
+    String FBDocRef = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
 
-//        Toolbar myChildToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-//        setSupportActionBar(myChildToolbar);
-//
-//        ActionBar ab = getSupportActionBar();
-//        ab.setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
-//        bucketStorageRef = intent.getStringExtra("FBRef");
-//        Log.d("imageAnalysis", bucketStorageRef);
+        FBDocRef = intent.getStringExtra("FBRef");
         printImages();
     }
 
     private void printImages() {
         Log.d("imageDisplay","PRINTIMAGES RUNNING");
+
+        // Restaurants => Res.Name => menu/items => "documents"
+        // OF4aus6Oz8q5VwzPkWdg
+//        db.collection("Restaurants")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
         db.collection("Restaurants")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
