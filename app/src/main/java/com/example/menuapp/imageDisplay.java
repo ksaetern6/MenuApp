@@ -22,6 +22,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Map;
+
 public class imageDisplay extends AppCompatActivity {
     // allow read, write: if request.auth != null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -56,6 +58,11 @@ public class imageDisplay extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("imageDisplayDebug", document.getId() + " => " + document.getData());
+                                Map<String,Object> dataMap = document.getData();
+                                if (dataMap.containsKey("test")) {
+                                    Object gsURLObject = dataMap.get("test");
+                                    loadImageFromBucket(gsURLObject.toString());
+                                }
                             }
 
                         }
@@ -86,6 +93,31 @@ public class imageDisplay extends AppCompatActivity {
 //                toast.show();
 //            }
 //        });
+    }
+    private void loadImageFromBucket(String gsURL) {
+        Log.d("imageDisplayDebug",gsURL);
+        // init reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        StorageReference imageRef = storage.getReferenceFromUrl(gsURL);
+
+        // Load bucket image
+        final long ONE_MB = 1024 * 1024;
+        imageRef.getBytes(ONE_MB).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                ImageView image = findViewById(R.id.imageView1);
+
+                image.setImageBitmap(bmp);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast toast = Toast.makeText(imageDisplay.this, e.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 
 }
