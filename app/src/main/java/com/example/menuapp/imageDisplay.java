@@ -12,16 +12,22 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class imageDisplay extends AppCompatActivity {
     // allow read, write: if request.auth != null;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
-    String bucketStorageRef = "images";
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+//    FirebaseStorage storage = FirebaseStorage.getInstance();
+//    StorageReference storageRef = storage.getReference();
+//    String bucketStorageRef = "images";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,36 +41,51 @@ public class imageDisplay extends AppCompatActivity {
 //        ab.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        bucketStorageRef = intent.getStringExtra("FBRef");
-        Log.d("imageAnalysis", bucketStorageRef);
+//        bucketStorageRef = intent.getStringExtra("FBRef");
+//        Log.d("imageAnalysis", bucketStorageRef);
         printImages();
     }
 
     private void printImages() {
         Log.d("imageDisplay","PRINTIMAGES RUNNING");
+        db.collection("Restaurants")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("imageDisplayDebug", document.getId() + " => " + document.getData());
+                            }
 
+                        }
+                        else {
+                            Log.d("imageDisplayDebug", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
 //        StorageReference sandwichRef = storage.getReferenceFromUrl(
 //                "gs://menuapp-f3764.appspot.com/sandwich.jpg");
-
-        StorageReference imageRef = storageRef.child(bucketStorageRef);
-        Log.d("imageDisplay",imageRef.getPath());
-
-        final long ONE_MB = 1024 * 1024;
-        imageRef.getBytes(ONE_MB).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                ImageView image = findViewById(R.id.imageView1);
-
-                image.setImageBitmap(bmp);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast toast = Toast.makeText(imageDisplay.this, e.getMessage(), Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
+//
+//        StorageReference imageRef = storageRef.child(bucketStorageRef);
+//        Log.d("imageDisplay",imageRef.getPath());
+//
+//        final long ONE_MB = 1024 * 1024;
+//        imageRef.getBytes(ONE_MB).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//            @Override
+//            public void onSuccess(byte[] bytes) {
+//                Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+//                ImageView image = findViewById(R.id.imageView1);
+//
+//                image.setImageBitmap(bmp);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast toast = Toast.makeText(imageDisplay.this, e.getMessage(), Toast.LENGTH_SHORT);
+//                toast.show();
+//            }
+//        });
     }
 
 }

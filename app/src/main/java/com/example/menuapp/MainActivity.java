@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             startCamera(); //start camera if permission has been granted by user
         } else{
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+            //startCamera
         }
     }
 
@@ -94,16 +95,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageAnalysisConfig iConfig = new ImageAnalysisConfig.Builder().build();
+        ImageAnalysisConfig iConfig = new ImageAnalysisConfig.Builder()
+                .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+                .build();
         ImageAnalysis imageAnalysis = new ImageAnalysis(iConfig);
 
         imageAnalysis.setAnalyzer(
                 new ImageAnalysis.Analyzer() {
                     @Override
                     public void analyze(ImageProxy imageProxy, int degrees) {
-                        if (imageProxy == null || imageProxy.getImage() == null) {
-                            return;
-                        }
+//                        if (imageProxy == null || imageProxy.getImage() == null) {
+//                            return;
+//                        }
                         Image mediaImage = imageProxy.getImage();
                         int rotation = degreesToFirebaseRotation(degrees);
                         FirebaseVisionImage image = FirebaseVisionImage.fromMediaImage(mediaImage,rotation);
@@ -119,13 +122,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-//        findViewById(R.id.imgCapture).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, imageDisplay.class);
-//                startActivity(intent);
-//            }
-//        });
 
         CameraX.bindToLifecycle(this, preview, imageAnalysis); //imgCap
 
@@ -173,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
     @doc: https://developer.android.com/training/permissions/requesting
     */
     private void processResult(List<FirebaseVisionBarcode> firebaseVisionBarcodes) {
+//        int debugLen = firebaseVisionBarcodes.size();
+//        Log.d("MainActivity", String.valueOf(debugLen));
         for(FirebaseVisionBarcode barcode: firebaseVisionBarcodes) {
             int valueType = barcode.getValueType();
 
