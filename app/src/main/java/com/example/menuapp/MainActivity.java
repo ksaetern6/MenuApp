@@ -25,6 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -55,20 +60,55 @@ public class MainActivity extends AppCompatActivity {
             .build();
     FirebaseVisionBarcodeDetector detector;
 
+    mainPageAdapter mPageAdapter;
+    ViewPager mPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_view_pager_main);
 
         textureView = findViewById(R.id.view_finder);
         Toolbar mainToolBar = findViewById(R.id.my_toolbar);
         setSupportActionBar(mainToolBar);
 
-        if(allPermissionsGranted()){
-            startCamera(); //start camera if permission has been granted by user
-        } else{
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
-            //startCamera
+        // view fragments
+        mPageAdapter = new mainPageAdapter(getSupportFragmentManager());
+        mPager = findViewById(R.id.view_pager);
+        mPager.setAdapter(mPageAdapter);
+        mPager.setCurrentItem(1);
+
+
+//        if(allPermissionsGranted()){
+//            startCamera(); //start camera if permission has been granted by user
+//        } else{
+//            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+//            //startCamera
+//        }
+    }
+
+    public static class mainPageAdapter extends FragmentPagerAdapter {
+
+        // BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT means the Activity state is reached after onResume is called
+        public mainPageAdapter(FragmentManager fm) {
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            switch(position) {
+                case 1:
+                    return cameraFragment.newInstance();
+                case 0:
+                    return navBarFragment.newInstance();
+            }
+            return null;
         }
     }
 

@@ -27,9 +27,9 @@ public class loginMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_main);
 
-        btnLogin = (Button) findViewById(R.id.login_button);
-        btnSignUp = (Button) findViewById(R.id.sign_up_button);
-        btnForgotPass = (Button) findViewById(R.id.forgot_pass_button);
+//        btnLogin = (Button) findViewById(R.id.login_button);
+//        btnSignUp = (Button) findViewById(R.id.sign_up_button);
+//        btnForgotPass = (Button) findViewById(R.id.forgot_pass_button);
 
         createSignInIntent();
     }
