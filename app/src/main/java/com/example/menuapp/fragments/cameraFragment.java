@@ -35,7 +35,6 @@ import java.util.List;
 
 public class cameraFragment extends Fragment {
 
-    private int RC_SIGN_IN = 123;
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     TextureView textureView;
@@ -57,7 +56,7 @@ public class cameraFragment extends Fragment {
         View cameraView = inflater.inflate(R.layout.activity_main , container, false);
 
         textureView = cameraView.findViewById(R.id.view_finder);
-        Toolbar mainToolBar = cameraView.findViewById(R.id.my_toolbar);
+        //Toolbar mainToolBar = cameraView.findViewById(R.id.my_toolbar);
         //setSupportActionBar(mainToolBar);
 
         if(allPermissionsGranted()){
