@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,29 +42,31 @@ public class navBarFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_navigation_view , container, false);
+        final View navBarView = inflater.inflate(R.layout.activity_navigation_view , container, false);
 
 //        createSignInIntent();
         if (!isLogged()) {
             createSignInIntent();
         }
 
-        signOutBtn = view.findViewById(R.id.sign_out_button);
+        signOutBtn = navBarView.findViewById(R.id.sign_out_button);
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 AuthUI.getInstance()
                         .signOut(getContext())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                //Toast.makeText(getActivity(), "Sign Out Successful", Toast.LENGTH_LONG);
+                                TextView hello = navBarView.findViewById(R.id.hello);
+                                hello.setText("Hello There");
                             }
                         });
             }
         });
 
-        return view;
+
+        return navBarView;
     }
     private boolean isLogged() {
         user = mAuth.getCurrentUser();
@@ -89,7 +92,7 @@ public class navBarFragment extends Fragment {
 @name:
 @desc: Sign in intent with sign in methods
 */
-    public void createSignInIntent(){
+    public void createSignInIntent() {
         //Choose auth providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
