@@ -39,5 +39,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+    
+    <GridLayout
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alignmentMode="alignMargins"
+        android:columnOrderPreserved="false"
+
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

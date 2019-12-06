@@ -68,29 +68,8 @@ public class imageDisplay extends AppCompatActivity {
                         }
                     }
                 });
-//        StorageReference sandwichRef = storage.getReferenceFromUrl(
-//                "gs://menuapp-f3764.appspot.com/sandwich.jpg");
-//
-//        StorageReference imageRef = storageRef.child(bucketStorageRef);
-//        Log.d("imageDisplay",imageRef.getPath());
-//
-//        final long ONE_MB = 1024 * 1024;
-//        imageRef.getBytes(ONE_MB).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-//                ImageView image = findViewById(R.id.imageView1);
-//
-//                image.setImageBitmap(bmp);
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast toast = Toast.makeText(imageDisplay.this, e.getMessage(), Toast.LENGTH_SHORT);
-//                toast.show();
-//            }
-//        });
     }
+
     private void loadImageFromBucket(String gsURL) {
         Log.d("imageDisplayDebug",gsURL);
         // init reference
@@ -104,7 +83,7 @@ public class imageDisplay extends AppCompatActivity {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                ImageView image = findViewById(R.id.imageView1);
+                ImageView image = findViewById(R.id.fb_image);
 
                 image.setImageBitmap(bmp);
             }
