@@ -3,10 +3,12 @@ package com.example.menuapp.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,9 +32,11 @@ public class navBarFragment extends Fragment {
 
     private static final int RC_SIGN_IN = 123;
     // init firebase auth
+
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = null;
     Button signOutBtn;
+    ImageView profilePic;
 
     // method called in getItem()
     public static navBarFragment newInstance() {
@@ -44,10 +48,35 @@ public class navBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         final View navBarView = inflater.inflate(R.layout.activity_navigation_view , container, false);
 
-//        createSignInIntent();
+        final TextView hello = navBarView.findViewById(R.id.hello);
+        profilePic = navBarView.findViewById(R.id.profile_image);
+
         if (!isLogged()) {
-            createSignInIntent();
+            // Start new activity?
+            //createSignInIntent();
         }
+        else {
+            getProfileInfo();
+            hello.setText(user.getUid());
+        }
+
+
+        /*
+        OnClickListeners
+         */
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                if (user != null) {
+                    // Go to Profile Page
+                }
+                else {
+                    // Go to sign up page
+                    createSignInIntent();
+                    // Reload Activity
+                }
+            }
+        });
 
         signOutBtn = navBarView.findViewById(R.id.sign_out_button);
         signOutBtn.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +87,6 @@ public class navBarFragment extends Fragment {
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                TextView hello = navBarView.findViewById(R.id.hello);
                                 hello.setText("Hello There");
                             }
                         });
@@ -113,22 +141,29 @@ public class navBarFragment extends Fragment {
     @name:
     @desc: Sign in intent with sign in methods
     */
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == RC_SIGN_IN) {
-//            IdpResponse response = IdpResponse.fromResultIntent(data);
-//
-//            if (resultCode == RESULT_OK) {
-//                //Successfully signed in
-//                user = mAuth.getCurrentUser();
-//                Toast.makeText(getActivity(), "Login Successful", Toast.LENGTH_SHORT);
-//            }
-//            else {
-//                //Sign in failed
-//                Toast.makeText(getActivity(), "Unsuccessful", Toast.LENGTH_SHORT);
-//            }
-//        }
-//    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                // Successfully signed
+                // Add user info to database
+                user = mAuth.getCurrentUser();
+                String name = user.getDisplayName();
+                String email = user.getEmail();
+                Uri photoUrl = user.getPhotoUrl();
+                Log.d("navBarFragment", name);
+                Log.d("navBarFragment", email);
+
+
+            }
+            else {
+                //Sign in failed
+                Toast.makeText(getActivity(), "Unsuccessful", Toast.LENGTH_SHORT);
+            }
+        }
+    }
 }
