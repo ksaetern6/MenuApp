@@ -51,7 +51,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
         // convert timestamp to dd/mm/yyyy hh:mm
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(timestamp));
-        String curTime = DateFormat.format("dd/MM/yyy hh:mm aa", calendar).toString();
+        String curTime = DateFormat.format("MM/dd/yyyy hh:mm aa", calendar).toString();
 
         //set data
         holder.commentAuthor.setText(username);
