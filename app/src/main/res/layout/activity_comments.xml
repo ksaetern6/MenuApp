@@ -27,8 +27,21 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            />
+
+        <RatingBar
+            android:id="@+id/comment_rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/comment_timestamp"
+            android:layout_toEndOf="@id/avatar_id"
+            android:layout_toRightOf="@id/avatar_id"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:rating="2"
             />
         <TextView
             android:id="@+id/comment_field"

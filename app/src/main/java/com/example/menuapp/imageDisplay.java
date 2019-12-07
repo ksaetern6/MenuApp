@@ -98,7 +98,8 @@ public class imageDisplay extends AppCompatActivity {
                         String uid = document.getString("uid");
                         String username = document.getString("username");
 
-                        commentModel comment = new commentModel(comment_field,date,uid,email,username);
+                        long rating = (long) document.get("rating");
+                        commentModel comment = new commentModel(comment_field,date,uid,email,username,rating);
                         commentList.add(comment);
 
                         // setup commentMain

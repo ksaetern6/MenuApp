@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
         String timestamp = commentList.get(position).getTimestamp();
         String email = commentList.get(position).getEmail();
         String username = commentList.get(position).getUsername();
+        long rating = commentList.get(position).getRating();
 
         // convert timestamp to dd/mm/yyyy hh:mm
 //        Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -57,6 +59,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
         holder.commentAuthor.setText(username);
         holder.commentField.setText(comment);
         holder.commentTimeStamp.setText(timestamp);
+        holder.commentRating.setRating(rating);
     }
 
 
@@ -69,6 +72,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
 
         ImageView avatarID;
         TextView commentAuthor, commentField, commentTimeStamp;
+        RatingBar commentRating;
 
         public commentHolder(@NonNull View view) {
             super(view);
@@ -76,6 +80,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
             commentAuthor = view.findViewById(R.id.comment_author);
             commentField = view.findViewById(R.id.comment_field);
             commentTimeStamp = view.findViewById(R.id.comment_timestamp);
+            commentRating = view.findViewById(R.id.comment_rating);
         }
     }
 
