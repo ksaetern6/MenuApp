@@ -42,21 +42,21 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
 
         //get data
         String uid = commentList.get(position).getUid();
-        String commentID = commentList.get(position).getCommentID();
+//        String commentID = commentList.get(position).getCommentID();
         String comment = commentList.get(position).getComment();
         String timestamp = commentList.get(position).getTimestamp();
         String email = commentList.get(position).getEmail();
         String username = commentList.get(position).getUsername();
 
         // convert timestamp to dd/mm/yyyy hh:mm
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        calendar.setTimeInMillis(Long.parseLong(timestamp));
-        String curTime = DateFormat.format("MM/dd/yyyy hh:mm aa", calendar).toString();
+//        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+//        calendar.setTimeInMillis(Long.parseLong(timestamp));
+//        String curTime = DateFormat.format("MM/dd/yyyy hh:mm aa", calendar).toString();
 
         //set data
         holder.commentAuthor.setText(username);
         holder.commentField.setText(comment);
-        holder.commentTimeStamp.setText(curTime);
+        holder.commentTimeStamp.setText(timestamp);
     }
 
 

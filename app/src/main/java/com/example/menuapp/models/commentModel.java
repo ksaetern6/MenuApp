@@ -1,14 +1,14 @@
 package com.example.menuapp.models;
 
 public class commentModel {
-    String commentID, comment, timestamp, uid, email, username;
+    String comment, timestamp, uid, email, username;
 
     public commentModel() {
 
     }
 
-    public commentModel(String commentID, String comment, String timestamp, String uid, String email, String username) {
-        this.commentID = commentID;
+    public commentModel(String comment, String timestamp, String uid, String email, String username) {
+        //this.commentID = commentID;
         this.comment = comment;
         this.timestamp = timestamp;
         this.uid = uid;
@@ -16,9 +16,9 @@ public class commentModel {
         this.username = username;
     }
 
-    public String getCommentID() {
-        return commentID;
-    }
+//    public String getCommentID() {
+//        return commentID;
+//    }
 
     public String getComment() {
         return comment;
