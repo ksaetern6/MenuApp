@@ -12,7 +12,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Adapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -58,16 +61,35 @@ public class imageDisplay extends AppCompatActivity {
     List<commentModel> commentList;
     commentMain commentMain;
 
+    // Add Review/Comment
+    EditText addComment;
+    ImageButton addCommentBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("imageDisplayDebug", "Is this running?");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
 
         recyclerView = findViewById(R.id.comment_section);
+        addComment = findViewById(R.id.comment_add);
+        addCommentBtn = findViewById(R.id.comment_add_button);
 
+        // [START Listeners]
+
+//        addCommentBtn.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+
+        // [END Listeners]
         Intent intent = getIntent();
         FBDocRef = intent.getStringExtra("FBRef");
-        printImages();
+        printImage();
     }
 
     private void loadComments() {
@@ -113,71 +135,50 @@ public class imageDisplay extends AppCompatActivity {
                 }
             }
         });
-//        for(int x=0; x < 10; x++) {
-//            String commentid = String.format("c0%s", String.valueOf(x));
-//            String comment_field = String.format("test%s", String.valueOf(x));
-//            String timestamp = String.valueOf(System.currentTimeMillis());
-//            String uid = String.format("u0%s", String.valueOf(x));
-//            String email = String.format("0%s@example.com", String.valueOf(x));
-//            String username = String.format("01%suser", String.valueOf(x));
-//
-//            Log.d("imageDisplayDebug", commentid);
-//
-//            commentModel comment = new commentModel(commentid,comment_field,timestamp,uid,email,username);
-//            commentList.add(comment);
-//
-//            // setup commentMain
-//            commentMain = new commentMain(getApplicationContext(), commentList);
-//
-//            //set commentMain
-//            recyclerView.setAdapter(commentMain);
-//        }
+
     }
 
-    private void printImages() {
+    private void printImage() {
 
-        // Restaurants => Res.Name => menu/items => "documents"
-        // OF4aus6Oz8q5VwzPkWdg
-//        db.collection("Restaurants")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//        db.collection("Restaurants")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//
-//                                Log.d("imageDisplayDebug", document.getId() + " => " + document.getData());
-//
-//                                Map<String,Object> dataMap = document.getData();
-//                                if (dataMap.containsKey("test")) {
-//                                    Object gsURLObject = dataMap.get("test");
-//                                    loadImageFromBucket(gsURLObject.toString());
-//                                }
-//                            }
-//
-//                        }
-//                        else {
-//                            Log.d("imageDisplayDebug", "Error getting documents.", task.getException());
-//                        }
-//                    }
-//                });
-        DocumentReference imageRef = db.document(FBDocRef);
-        Task<DocumentSnapshot> doc = imageRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    Log.d("imageDisplayDebug", document.getString("name"));
-                    loadImageFromBucket(document.getString("locationRef"));
+        // if this fails finish activity
+        try {
+            DocumentReference imageRef = db.document(FBDocRef);
+            Task<DocumentSnapshot> doc = imageRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        Log.d("imageDisplayDebug", document.getString("name"));
+                        loadImageFromBucket(document.getString("locationRef"));
 
-                    loadComments();
+                        loadComments();
+                    }
+
                 }
-
-            }
-        });
+            });
+        }
+        catch (Exception e) {
+            Toast.makeText(imageDisplay.this, "Invalid QR Code", Toast.LENGTH_LONG).show();
+            finish();
+        }
+//        DocumentReference imageRef = db.document(FBDocRef);
+//        Task<DocumentSnapshot> doc = imageRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if(task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    Log.d("imageDisplayDebug", document.getString("name"));
+//                    loadImageFromBucket(document.getString("locationRef"));
+//
+//                    loadComments();
+//                }
+//                else {
+//                    Toast.makeText(imageDisplay.this, "Invalid QR Code", Toast.LENGTH_LONG).show();
+//                    finish();
+//                }
+//
+//            }
+//        });
     }
 
     private void loadImageFromBucket(String gsURL) {
