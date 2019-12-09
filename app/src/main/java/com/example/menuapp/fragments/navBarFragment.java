@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.menuapp.R;
+import com.example.menuapp.profileInfo;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,8 +36,9 @@ public class navBarFragment extends Fragment {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = null;
-    Button signOutBtn;
     ImageView profilePic;
+    ImageButton profileBtn, mapsBtn, favBtn, logoutBtn;
+    TextView username;
 
     // method called in getItem()
     public static navBarFragment newInstance() {
@@ -45,30 +47,36 @@ public class navBarFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View navBarView = inflater.inflate(R.layout.activity_navigation_view , container, false);
 
-        final TextView hello = navBarView.findViewById(R.id.hello);
+        //final TextView hello = navBarView.findViewById(R.id.hello);
         profilePic = navBarView.findViewById(R.id.profile_image);
+        profileBtn = navBarView.findViewById(R.id.nav_profile_tile);
+        mapsBtn = navBarView.findViewById(R.id.nav_maps_tile);
+        favBtn = navBarView.findViewById(R.id.nav_fav_tile);
+        logoutBtn = navBarView.findViewById(R.id.nav_log_out_tile);
+        username = navBarView.findViewById(R.id.profile_username);
 
         if (!isLogged()) {
             // Start new activity?
             //createSignInIntent();
         }
         else {
-            getProfileInfo();
-            hello.setText(user.getUid());
+            username.setText(user.getDisplayName());
         }
 
 
         /*
         OnClickListeners
          */
-        profilePic.setOnClickListener(new View.OnClickListener() {
+        profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 if (user != null) {
                     // Go to Profile Page
+                    Intent intent = new Intent(getContext(), profileInfo.class);
+                    startActivity(intent);
                 }
                 else {
                     // Go to sign up page
@@ -77,22 +85,24 @@ public class navBarFragment extends Fragment {
                 }
             }
         });
-
-        signOutBtn = navBarView.findViewById(R.id.sign_out_button);
-        signOutBtn.setOnClickListener(new View.OnClickListener() {
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(final View view) {
-                AuthUI.getInstance()
+            public void onClick(View view) {
+                Log.d("MainActivity", "Log out button clicked");
+                if (user != null) {
+                    AuthUI.getInstance()
                         .signOut(getContext())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                hello.setText("Hello There");
+                                user = null;
+                                username.setText("Please Sign In");
                             }
                         });
+                }
             }
-        });
 
+        });
 
         return navBarView;
     }
@@ -152,11 +162,11 @@ public class navBarFragment extends Fragment {
                 // Successfully signed
                 // Add user info to database
                 user = mAuth.getCurrentUser();
-                String name = user.getDisplayName();
-                String email = user.getEmail();
-                Uri photoUrl = user.getPhotoUrl();
-                Log.d("navBarFragment", name);
-                Log.d("navBarFragment", email);
+//                String name = user.getDisplayName();
+//                String email = user.getEmail();
+//                Uri photoUrl = user.getPhotoUrl();
+//                Log.d("navBarFragment", name);
+//                Log.d("navBarFragment", email);
 
 
             }

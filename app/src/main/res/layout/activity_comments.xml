@@ -36,7 +36,7 @@
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/comment_timestamp"
+            android:layout_below="@id/comment_timestamp"
             android:layout_toEndOf="@id/avatar_id"
             android:layout_toRightOf="@id/avatar_id"
             android:isIndicator="true"

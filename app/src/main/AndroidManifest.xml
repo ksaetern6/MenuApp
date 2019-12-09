@@ -35,6 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- profile info activity -->
+        <activity
+            android:name=".profileInfo"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>
