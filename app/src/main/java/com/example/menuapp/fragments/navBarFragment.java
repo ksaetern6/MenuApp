@@ -19,13 +19,19 @@ import com.example.menuapp.R;
 import com.example.menuapp.profileInfo;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -36,6 +42,7 @@ public class navBarFragment extends Fragment {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = null;
+    View navBarView;
     ImageView profilePic;
     ImageButton profileBtn, mapsBtn, favBtn, logoutBtn;
     TextView username;
@@ -48,7 +55,7 @@ public class navBarFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        final View navBarView = inflater.inflate(R.layout.activity_navigation_view , container, false);
+        navBarView = inflater.inflate(R.layout.activity_navigation_view , container, false);
 
         //final TextView hello = navBarView.findViewById(R.id.hello);
         profilePic = navBarView.findViewById(R.id.profile_image);
@@ -155,19 +162,36 @@ public class navBarFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d("requestCode", String.valueOf(resultCode));
+
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
+            if (response.isNewUser()) {
+
+                //get uid & add to fb
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                Map<String, Object> fbUser = new HashMap<>();
+                fbUser.put("display name", user.getDisplayName());
+                fbUser.put("uid", user.getUid());
+                fbUser.put("email", user.getEmail());
+                fbUser.put("photoUrl", "");
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("Users")
+                        .add(fbUser)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("navBarFragmentDebug", documentReference.getId());
+                                updateUI();
+                            }
+                        });
+            }
+
             if (resultCode == RESULT_OK) {
                 // Successfully signed
-                // Add user info to database
-                user = mAuth.getCurrentUser();
-//                String name = user.getDisplayName();
-//                String email = user.getEmail();
-//                Uri photoUrl = user.getPhotoUrl();
-//                Log.d("navBarFragment", name);
-//                Log.d("navBarFragment", email);
-
 
             }
             else {
@@ -175,5 +199,10 @@ public class navBarFragment extends Fragment {
                 Toast.makeText(getActivity(), "Unsuccessful", Toast.LENGTH_SHORT);
             }
         }
+    }
+
+    private void updateUI() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        username.setText(user.getDisplayName());
     }
 }
