@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.menuapp.R;
+import com.example.menuapp.aMapAct;
 import com.example.menuapp.profileInfo;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -110,6 +111,15 @@ public class navBarFragment extends Fragment {
             }
 
         });
+
+        mapsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), aMapAct.class);
+                startActivity(intent);
+            }
+        });
+
 
         return navBarView;
     }

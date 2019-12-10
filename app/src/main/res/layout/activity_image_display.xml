@@ -96,6 +96,7 @@
             android:inputType="textCapSentences|textMultiLine"
             android:background="@android:color/white"
             android:padding="10dp"
+            android:maxLength="140"
             />
 
         <ImageButton
@@ -106,6 +107,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_send_black_36dp"
             android:background="@null"
+            android:paddingTop="4dp"
+            android:paddingRight="8dp"
             />
 
 

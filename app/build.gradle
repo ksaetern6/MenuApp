@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion 29
@@ -31,18 +33,18 @@ dependencies {
     // If you want to use Camera2 extensions.
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     //firebase
-    implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
-    implementation 'com.google.firebase:firebase-firestore:21.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-firestore:21.3.1'
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
 
 }
-
-apply plugin: 'com.google.gms.google-services'
