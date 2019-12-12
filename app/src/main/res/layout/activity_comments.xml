@@ -14,8 +14,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar_id"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginRight="5dp"
             android:src="@drawable/ic_android_black_48dp"
@@ -36,7 +36,7 @@
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/comment_timestamp"
+            android:layout_below="@id/comment_field"
             android:layout_toEndOf="@id/avatar_id"
             android:layout_toRightOf="@id/avatar_id"
             android:isIndicator="true"
@@ -53,15 +53,15 @@
             android:layout_toRightOf="@id/avatar_id"
             android:textColor="@android:color/black"
             />
-        <TextView
-            android:id="@+id/comment_timestamp"
-            android:text="01/01/19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/comment_field"
-            android:layout_toEndOf="@id/avatar_id"
-            android:layout_toRightOf="@id/avatar_id"
-            />
+<!--        <TextView-->
+<!--            android:id="@+id/comment_timestamp"-->
+<!--            android:text="01/01/19"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/comment_field"-->
+<!--            android:layout_toEndOf="@id/avatar_id"-->
+<!--            android:layout_toRightOf="@id/avatar_id"-->
+<!--            />-->
     </RelativeLayout>
 
 </RelativeLayout>

@@ -12,12 +12,18 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.example.menuapp.firebase.FBAuth;
@@ -66,65 +72,127 @@ public class imageDisplay extends AppCompatActivity {
     String FBDocRef = "";
     FirebaseUser user;
 
+    //
+    ImageView itemImage;
+
     // Scrolling
     RecyclerView recyclerView;
     List<commentModel> commentList;
     commentMain commentMain;
 
     // Add Review/Comment
-    EditText addComment;
+    EditText commentField;
     ImageButton addCommentBtn;
 
     //Add Comment
-    boolean isThereAComment;
     String userComment;
     String userDocId;
+    long rating;
+    boolean isThereAComment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.d("imageDisplayDebug", "Is this running?");
+    protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
 
         recyclerView = findViewById(R.id.comment_section);
-        addComment = findViewById(R.id.comment_add);
+        commentField = findViewById(R.id.comment_add_comment_field);
         addCommentBtn = findViewById(R.id.comment_add_button);
+        itemImage = findViewById(R.id.fb_image);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            addComment.setEnabled(false);
+            commentField.setEnabled(false);
+            addCommentBtn.setEnabled(false);
+        }
+        else {
+            // init user's doc id
+            userDocId = user.getUid();
+
         }
         // [START Listeners]
 
+        // Adding Comment Button
         addCommentBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                String comment = addComment.getText().toString();
+                userComment = commentField.getText().toString();
 
-                if (addComment.isEnabled()) {
-                    if (comment.isEmpty()) {
+                if (commentField.isEnabled()) {
+
+                    if (userComment.isEmpty()) {
                         Toast.makeText(imageDisplay.this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
-                        Log.d("imageDisplayDebug", "comment is empty");
-                    } else {
-                        Log.d("imageDisplayDebug", comment);
+                    } // if
 
-                        // Add comment method
-                        if (addComment(comment)){
-                            // if successfully added, refresh
-                            finish();
-                            startActivity(getIntent());
-                        }
-                        // Show ratings
-                    }
+                    else {
+
+
+                        LayoutInflater inflater = (LayoutInflater) view.getContext()
+                                .getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
+
+                        final View popupView = inflater.inflate(R.layout.activity_pop_up_view,null); // bad practice
+
+                        // Height x Width Contraints
+                        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+                        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+
+                        // make items outside of window inactive
+                        boolean focusable = true;
+
+                        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                        //set location of window
+                        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+                        // Init elements of window
+                        final RatingBar popUpRatingBar = popupView.findViewById(R.id.pop_up_rating_bar);
+
+                        Button submitBtn = popupView.findViewById(R.id.pop_up_submit_btn);
+
+                        submitBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                rating = (long) popUpRatingBar.getRating();
+//                                if (isThereAComment) {
+//                                    updateComment();
+//                                }
+//                                else {
+//                                    addComment();
+//                                }
+                                addComment();
+                                finish();
+                                startActivity(getIntent());
+                            }
+                        });
+
+                        popupView.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                // Close when when clicked
+                                popupWindow.dismiss();
+                                return true;
+                            }
+                        });
+
+                       } // else
                 }
 
                 else {
                     Toast.makeText(imageDisplay.this, "Log In to Comment", Toast.LENGTH_SHORT).show();
                 }
             }
+        }); //addComment listener
+
+        itemImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // open new activity
+            }
         });
+
+
 
         // [END Listeners]
         Intent intent = getIntent();
@@ -132,7 +200,8 @@ public class imageDisplay extends AppCompatActivity {
         printImage();
     }
 
-    private void loadComments() {
+    private void loadComments(boolean isThereAComment, commentModel comment) {
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
 
         // set layout to recycleview
@@ -144,8 +213,11 @@ public class imageDisplay extends AppCompatActivity {
         // load comments from fb and display to view
 
         // ** if user has already commented, add to front of list
+        if (isThereAComment) {
+            // prepend to commentList
+            commentList.add(comment);
+        }
 
-        // ** sort by timestamp
 
         String FBColRef = FBDocRef + "/comments";
         CollectionReference commentsRef = db.collection(FBColRef);
@@ -158,11 +230,11 @@ public class imageDisplay extends AppCompatActivity {
                         String comment_field = document.getString("comment");
                         String email = document.getString("email");
 
-                        Timestamp timestamp = (Timestamp) document.get("timestamp");
-                        if (timestamp == null) {
-                            Log.d("navBarTimestamp", "timestamp is null");
-
-                        }
+//                        Timestamp timestamp = (Timestamp) document.get("timestamp");
+//                        if (timestamp == null) {
+//                            Log.d("imageDisplayDebug", "timestamp is null");
+//                            Log.d("imageDisplayDebug", document.getId());
+//                        }
                         //String date = formatTimestamp(timestamp);
 
 
@@ -170,7 +242,7 @@ public class imageDisplay extends AppCompatActivity {
                         String username = document.getString("username");
 
                         long rating = (long) document.get("rating");
-                        commentModel comment = new commentModel(comment_field,timestamp.toString(),uid,email,username,rating);
+                        commentModel comment = new commentModel(comment_field, uid, email, username, rating);
                         commentList.add(comment);
 
                         // setup commentMain
@@ -179,11 +251,11 @@ public class imageDisplay extends AppCompatActivity {
                         // set Adapter to commentMain
                         recyclerView.setAdapter(commentMain);
 
-                        Log.d("imageDisplayDebug", document.getData().toString());
                     }
                 }
             }
         });
+
 
     }
 
@@ -197,10 +269,10 @@ public class imageDisplay extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        Log.d("imageDisplayDebug", document.getString("name"));
                         loadImageFromBucket(document.getString("locationRef"));
 
-                        loadComments();
+                        // load comments
+                        if (user != null){ checkIfComment(); }
                     }
 
                 }
@@ -214,7 +286,6 @@ public class imageDisplay extends AppCompatActivity {
     }
 
     private void loadImageFromBucket(String gsURL) {
-        Log.d("imageDisplayDebug",gsURL);
         // init reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -248,109 +319,104 @@ public class imageDisplay extends AppCompatActivity {
         return formattedDate;
     }
 
-    private boolean addComment(final String comment) {
+    private void addComment() {
 
-        // Check if user has already added comment
+        // Add comment to Restaurant item
+        Map<String, Object> fbComment = new HashMap<>();
+        fbComment.put("comment", userComment);
+        fbComment.put("email", user.getEmail());
+        fbComment.put("rating", rating);
+        fbComment.put("uid", user.getUid());
+        fbComment.put("username", user.getDisplayName());
 
-        if (alreadyHasComment()) {
-            // print at top
+        db.collection(FBDocRef + "/comments")
+                .add(fbComment)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("imageDisplayDebug", "Comment Saved to " + FBDocRef);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("imageDisplayDebug", "Comment NOT Saved to Restaurant item!");
+                    }
+                });
 
-            // Edit Text changes to 'Change Comment'
-            return false;
-        }
-        else {
+        // Add comment to user profile
+        fbComment.put("locationRef", FBDocRef);
 
-            // Add the comment
+        db.collection("Users/" + userDocId + "/total_comments")
+                .add(fbComment)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("imageDisplayDebug", "Comment Saved to " + userDocId);
 
-            // Add comment to Restaurant item
-            Map<String, Object> fbComment = new HashMap<>();
-            fbComment.put("comment", comment);
-            fbComment.put("email", user.getEmail());
-            fbComment.put("rating", 4);
-            fbComment.put("timestamp", FieldValue.serverTimestamp());
-            fbComment.put("uid", user.getUid());
-            fbComment.put("username", user.getDisplayName());
-
-            db.collection(FBDocRef + "/comments")
-                    .add(fbComment)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d("imageDisplayDebug", "Comment Saved to Restaurant item!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("imageDisplayDebug", "Comment NOT Saved to Restaurant item!");
-                        }
-                    });
-
-            // Add comment to user profile
-
-            db.collection("Users/" + userDocId + "/total_comments")
-                    .add(fbComment)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d("imageDisplayDebug", "Comment Saved to user profile!");
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("imageDisplayDebug", "Comment NOT Saved to user profile");
-                        }
-                    });
-            return true;
-        } // else
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("imageDisplayDebug", "Comment NOT Saved to user profile");
+                    }
+                });
 
     }
 
-    private boolean alreadyHasComment() {
+    private void checkIfComment() {
 
-        // Query to find user's unique doc id with user's uid
-        final CollectionReference userRef = db.collection("Users");
-        Query query = userRef.whereEqualTo("uid", user.getUid()).limit(1);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        // Collection of all of user's comments
+        CollectionReference totalCom = db.collection("Users/" + userDocId + "/total_comments");
+
+        // query to heck if any of the comments have a reference to the current image
+        Query commentQuery = totalCom.whereEqualTo("locationRef", FBDocRef);
+
+        // checking for reference to image
+        commentQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                    commentModel comment = new commentModel();
+                    // if there are no comments
+                    if (task.getResult().size() == 0) {
 
-                        userDocId = doc.getId();
-                        Log.d("imageDisplayDebug", userDocId);
+                        isThereAComment = false;
+                        //Log.d("imageDisplayDebug", "empty: " + task.getResult().toString());
+                    }
 
-                        // Once the user is found query through it's total_comments subcollection
-                        // to find if the user has commmented on the specific restaurant.
-                        CollectionReference totalCom = db.collection("Users/" + userDocId + "/total_comments");
-                        Query commentQuery = totalCom.whereEqualTo("locationRef", FBDocRef);
-                        commentQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    if (task.getResult().size() == 0) {
-                                        isThereAComment = false;
-                                    }
-                                    else {
-                                        isThereAComment = true;
-                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                    // else there are comments
+                    else {
+                        isThereAComment = true;
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
 
-                                            // The user's comment
-                                            userComment = doc.get("comment").toString();
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                            // The user's comment
+                            long usrRating = (long) doc.get("rating");
 
+                            comment = new commentModel(
+                                            doc.getString("comment"),
+                                            doc.getString("uid"),
+                                            doc.getString("email"),
+                                            doc.getString("username"),
+                                            usrRating);
+
+                        }
+                    }
+                    // load all comments
+                    if (isThereAComment) {
+                        loadComments(isThereAComment, comment);
                     }
                 }
             }
         });
 
-        return isThereAComment;
+    } // checkIfComment()
+
+    private void updateComment() {
+
+        //update Res.
+        // update user
     }
 
 }

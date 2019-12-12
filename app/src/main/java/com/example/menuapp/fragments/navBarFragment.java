@@ -180,29 +180,40 @@ public class navBarFragment extends Fragment {
             if (response.isNewUser()) {
 
                 //get uid & add to fb
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser fbuser = FirebaseAuth.getInstance().getCurrentUser();
+
+                String uid = fbuser.getUid();
 
                 Map<String, Object> fbUser = new HashMap<>();
-                fbUser.put("display name", user.getDisplayName());
-                fbUser.put("uid", user.getUid());
-                fbUser.put("email", user.getEmail());
+                fbUser.put("display name", fbuser.getDisplayName());
+                fbUser.put("uid", uid);
+                fbUser.put("email", fbuser.getEmail());
                 fbUser.put("photoUrl", "");
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 db.collection("Users")
-                        .add(fbUser)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        .document(uid)
+                        .set(fbUser)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("navBarFragmentDebug", documentReference.getId());
+                            public void onSuccess(Void aVoid) {
                                 updateUI();
                             }
                         });
+                user = fbuser;
+//                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                            @Override
+//                            public void onSuccess(DocumentReference documentReference) {
+//                                Log.d("navBarFragmentDebug", documentReference.getId());
+//                                updateUI();
+//                            }
+//                        });
             }
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed
-
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                updateUI();
             }
             else {
                 //Sign in failed

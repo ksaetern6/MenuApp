@@ -42,11 +42,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
     public void onBindViewHolder(@NonNull commentHolder holder, int position) {
 
         //get data
-        String uid = commentList.get(position).getUid();
-//        String commentID = commentList.get(position).getCommentID();
         String comment = commentList.get(position).getComment();
-        String timestamp = commentList.get(position).getTimestamp();
-        String email = commentList.get(position).getEmail();
         String username = commentList.get(position).getUsername();
         long rating = commentList.get(position).getRating();
 
@@ -58,7 +54,6 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
         //set data
         holder.commentAuthor.setText(username);
         holder.commentField.setText(comment);
-        holder.commentTimeStamp.setText(timestamp);
         holder.commentRating.setRating(rating);
     }
 
@@ -71,7 +66,7 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
     class commentHolder extends RecyclerView.ViewHolder {
 
         ImageView avatarID;
-        TextView commentAuthor, commentField, commentTimeStamp;
+        TextView commentAuthor, commentField;
         RatingBar commentRating;
 
         public commentHolder(@NonNull View view) {
@@ -79,7 +74,6 @@ public class commentMain extends RecyclerView.Adapter<commentMain.commentHolder>
             avatarID = view.findViewById(R.id.avatar_id);
             commentAuthor = view.findViewById(R.id.comment_author);
             commentField = view.findViewById(R.id.comment_field);
-            commentTimeStamp = view.findViewById(R.id.comment_timestamp);
             commentRating = view.findViewById(R.id.comment_rating);
         }
     }
