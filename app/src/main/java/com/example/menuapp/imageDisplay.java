@@ -155,12 +155,6 @@ public class imageDisplay extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 rating = (long) popUpRatingBar.getRating();
-//                                if (isThereAComment) {
-//                                    updateComment();
-//                                }
-//                                else {
-//                                    addComment();
-//                                }
                                 addComment();
                                 finish();
                                 startActivity(getIntent());
@@ -188,7 +182,26 @@ public class imageDisplay extends AppCompatActivity {
         itemImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // open new activity
+                db.document(FBDocRef).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Intent intent = new Intent(getApplicationContext(), RestaurantMap.class);
+
+                        String itemTitle = documentSnapshot.get("name").toString();
+                        String itemDesc = documentSnapshot.get("description").toString();
+                        String resRef= documentSnapshot.get("res_ref").toString();
+
+                        intent.putExtra("TITLE", itemTitle);
+                        intent.putExtra("DESC", itemDesc);
+                        intent.putExtra("RES_REF", resRef);
+                        startActivity(intent);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(imageDisplay.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
@@ -236,7 +249,6 @@ public class imageDisplay extends AppCompatActivity {
 //                            Log.d("imageDisplayDebug", document.getId());
 //                        }
                         //String date = formatTimestamp(timestamp);
-
 
                         String uid = document.getString("uid");
                         String username = document.getString("username");

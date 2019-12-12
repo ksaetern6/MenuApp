@@ -5,4 +5,5 @@
     <string name="profile_username">Please Sign In</string>
     <string name="maps_api_key">AIzaSyCIGaIF8CP6AVPkodKYNKWFEnGTUiOkOMs</string>
     <string name="pop_up_title">Rate It!</string>
+    <string name="places_api_key">AIzaSyDZRu7J05kyIVLrjLuBlUKAUZTr5Hh5xnI</string>
 </resources>

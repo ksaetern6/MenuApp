@@ -51,9 +51,14 @@
             android:name=".profileInfo"
             android:parentActivityName=".MainActivity"></activity>
 
+        <!-- profile map activity-->
         <activity android:name=".aMapAct"
             android:parentActivityName=".MainActivity"></activity>
 
+        <!-- Restaurant map activity-->
+        <activity
+            android:name=".RestaurantMap"
+            android:parentActivityName=".imageDisplay"/>
     </application>
 
 </manifest>
